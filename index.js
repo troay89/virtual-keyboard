@@ -9,6 +9,26 @@ class VirtualKeyboard {
     mainText.innerText = 'RSS Виртуальная клавиатура';
     header.append(mainText);
     body.append(header);
+    const letters = this.objectLetters();
+    body.addEventListener('keydown', (event) => {
+      const textAria = document.querySelector('.main__text-area');
+      const frameKeyboard = document.querySelector('.frame-keyboard');
+      console.log(event)
+      for (let button of frameKeyboard.children){
+        if(button.firstElementChild.innerHTML === event.key.trim()) {
+          textAria.value += letters[' ' + button.firstElementChild.innerHTML];
+          button.setAttribute("style", "background-color: #00ff00;");
+        }
+      }
+    })
+    body.addEventListener("keyup", (event) => {
+      const frameKeyboard = document.querySelector('.frame-keyboard');
+      for (let button of frameKeyboard.children){
+        if(button.firstElementChild.innerHTML.trim() === event.key.trim()) {
+          button.setAttribute("style", "background-color: black;");
+        }
+      }
+    });
   }
 
   static createMain() {
@@ -27,84 +47,89 @@ class VirtualKeyboard {
 
   static objectLetters() {
     return {
-      '`': '0027',
-      ' 1': '0031',
-      ' 2': '0032',
-      ' 3': '0033',
-      ' 4': '0034',
-      ' 5': '0035',
-      ' 6': '0036',
-      ' 7': '0037',
-      ' 8': '0038',
-      ' 9': '0039',
-      ' 0': '0030',
-      '-': '-',
-      '=': '=',
-      Back: 'Back',
-      Tab: 'Tab',
-      q: '0071',
-      w: '0077',
-      e: '0065',
-      r: 'r',
-      t: 't',
-      y: 'y',
-      u: 'u',
-      i: 'i',
-      o: 'o',
-      p: 'p',
-      '[': '[',
-      ']': ']',
-      '\\': '\\',
-      Del: 'Del',
-      Caps: 'Caps',
-      a: 'a',
-      s: 's',
-      d: 'd',
-      f: 'f',
-      g: 'g',
-      h: 'h',
-      j: 'j',
-      k: 'k',
-      l: 'l',
-      ';': ';',
-      '\'': '\'',
-      Ent: 'Ent',
-      Sh: 'Sh',
-      z: 'z',
-      x: 'x',
-      c: 'c',
-      v: 'v',
-      b: 'b',
-      n: 'n',
-      m: 'm',
-      ',': ',',
-      '.': '.',
-      '/': '/',
-      up: 'up',
-      RSh: 'RSh',
-      Ct: 'Ct',
-      Win: 'Win',
-      Alt: 'Alt',
-      pr: 'pr',
-      RAlt: 'RAlt',
-      left: 'left',
-      down: 'down',
-      right: 'right',
-      ctrl: 'ctrl',
+      ' `': '`',
+      ' 1': '1',
+      ' 2': '2',
+      ' 3': '3',
+      ' 4': '4',
+      ' 5': '5',
+      ' 6': '6',
+      ' 7': '7',
+      ' 8': '8',
+      ' 9': '9',
+      ' 0': '0',
+      ' -': '-',
+      ' =': '=',
+      ' Backspace': '',
+      ' Tab': 'Tab',
+      ' q': 'q',
+      ' w': 'w',
+      ' e': 'e',
+      ' r': 'r',
+      ' t': 't',
+      ' y': 'y',
+      ' u': 'u',
+      ' i': 'i',
+      ' o': 'o',
+      ' p': 'p',
+      ' [': '[',
+      ' ]': ']',
+      ' \\': '\\',
+      ' Del': 'Del',
+      ' Caps': 'Caps',
+      ' a': 'a',
+      ' s': 's',
+      ' d': 'd',
+      ' f': 'f',
+      ' g': 'g',
+      ' h': 'h',
+      ' j': 'j',
+      ' k': 'k',
+      ' l': 'l',
+      ' ;': ';',
+      ' \'': '\'',
+      ' Ent': 'Ent',
+      ' Sh': 'Sh',
+      ' z': 'z',
+      ' x': 'x',
+      ' c': 'c',
+      ' v': 'v',
+      ' b': 'b',
+      ' n': 'n',
+      ' m': 'm',
+      ' ,': ',',
+      ' .': '.',
+      ' /': '/',
+      ' up': 'up',
+      ' RSh': 'RSh',
+      ' Ct': 'Ct',
+      ' Win': 'Win',
+      ' Alt': 'Alt',
+      ' ': ' ',
+      ' RAlt': 'RAlt',
+      ' left': 'left',
+      ' down': 'down',
+      ' right': 'right',
+      ' ctrl': 'ctrl',
     };
   }
 
   static addButton(btn) {
     const frameKeyboard = document.querySelector('.frame-keyboard');
+    if (btn.firstElementChild.innerHTML === 'Backspace') btn.classList.add('frame-keyboard__button_backspace');
     frameKeyboard.append(btn);
   }
 
   static createButton(letter) {
+    const textAria = document.querySelector('.main__text-area');
     const button = document.createElement('div');
     const p = document.createElement('p');
     button.classList.add('frame-keyboard__button');
     p.classList.add('frame-keyboard__text');
     p.innerText = letter[0].toString().trim();
+    button.addEventListener('click', () => {
+      textAria.value += letter[1];
+    });
     button.append(p);
     return button;
   }
