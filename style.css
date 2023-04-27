@@ -1,0 +1,40 @@
+.header__main-text {
+    text-align: center
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.frame-keyboard {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 8px;
+    row-gap: 45px;
+    padding: 10px;
+    width: 800px;
+    height: 300px;
+    background-color: gray;
+
+}
+
+.frame-keyboard__button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    background-color: black;
+    border-radius: 5px;
+}
+
+.frame-keyboard__button:hover {
+    background-color: gold;
+}
+
+.frame-keyboard__text {
+    color: cornsilk;
+}
