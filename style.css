@@ -13,11 +13,10 @@
     display: flex;
     flex-wrap: wrap;
     align-content: center;
-    column-gap: 8px;
-    row-gap: 8px;
+    gap: 5px;
     padding: 10px;
-    width: 710px;
-    height: 250px;
+    width: 760px;
+    height: 270px;
     background-color: gray;
 
 }
@@ -26,14 +25,30 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 40px;
-    height: 40px;
+    width: 45px;
+    height: 45px;
     background-color: black;
     border-radius: 5px;
+    cursor: pointer;
 }
 
-.frame-keyboard__button_backspace {
-    width: 80px;
+.frame-keyboard__button_capsLock,
+.frame-keyboard__button_backspace,
+.frame-keyboard__button_shift-left{
+    width: 110px;
+}
+
+.frame-keyboard__button_tab {
+    width: 60px;
+}
+
+.frame-keyboard__button_enter,
+.frame-keyboard__button_shift-right{
+    width: 95px;
+}
+
+.frame-keyboard__button_space {
+    width: 360px;
 }
 
 .frame-keyboard__button:hover {
