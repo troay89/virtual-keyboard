@@ -2,6 +2,7 @@ const body = document.querySelector('body');
 let positionCarriage = 0;
 let isCapsLock = false;
 let shiftMouse = false;
+let clickMouseKey = true;
 const language = { state: 'english' };
 
 function setLocalStorage() {
@@ -23,26 +24,37 @@ class VirtualKeyboard {
       const textAria = document.querySelector('.main__text-area');
       const frameKeyboard = document.querySelector('.frame-keyboard');
       const buttons = frameKeyboard.children;
+      clickMouseKey = true;
       for (let i = 0; i < buttons.length; i += 1) {
         if (letters[event.code].includes(buttons[i].firstElementChild.innerHTML)) {
-          if (event.key === 'Backspace' && textAria.readOnly && positionCarriage !== 0) {
+          if (event.key === 'Backspace' && positionCarriage !== 0) {
+            event.preventDefault();
             const text = textAria.value;
             textAria.value = text.slice(0, positionCarriage - 1) + text.slice(positionCarriage);
             if (positionCarriage > 0) positionCarriage -= 1;
             else positionCarriage = 0;
+            textAria.selectionEnd = positionCarriage;
           } else if (event.key === 'Tab') {
             event.preventDefault();
             const text = textAria.value;
             textAria.value = `${text.slice(0, positionCarriage)}    ${text.slice(positionCarriage)}`;
             positionCarriage += 4;
             textAria.selectionEnd = positionCarriage;
-          } else if (event.key === 'Delete' && textAria.readOnly) {
+          } else if (event.key === 'Delete') {
+            event.preventDefault();
             const text = textAria.value;
             textAria.value = text.slice(0, positionCarriage) + text.slice(positionCarriage + 1);
+            textAria.selectionEnd = positionCarriage;
           } else if (event.key === 'CapsLock') {
             isCapsLock = !isCapsLock;
-            if (isCapsLock) {
+            if (isCapsLock && !event.shiftKey) {
               this.keyNames(2, 3, letters);
+              buttons[i].setAttribute('style', 'background-color: #00ff00;');
+            } else if (isCapsLock && event.shiftKey) {
+              this.keyNames(6, 7, letters);
+              buttons[i].setAttribute('style', 'background-color: #00ff00;');
+            } else if (event.shiftKey && !isCapsLock) {
+              this.keyNames(4, 5, letters);
               buttons[i].setAttribute('style', 'background-color: #00ff00;');
             } else {
               this.keyNames(0, 1, letters);
@@ -50,10 +62,12 @@ class VirtualKeyboard {
               buttons[i].setAttribute('style', 'transition: all 0.5s;');
             }
           } else if (event.key === 'Enter') {
-            if (textAria.readOnly) {
-              textAria.value += '\n';
-              positionCarriage += 1;
-            }
+            event.preventDefault();
+            const text = textAria.value;
+            textAria.value = `${text.slice(0, positionCarriage)}\n${
+              text.slice(positionCarriage)}`;
+            positionCarriage += 1;
+            textAria.selectionEnd = positionCarriage;
           } else if (event.key === 'Meta') {
             event.preventDefault();
           } else if (event.key === 'Alt' || event.key === 'Control') {
@@ -109,13 +123,7 @@ class VirtualKeyboard {
               positionCarriage += 1;
               textAria.selectionEnd = positionCarriage;
             }
-          } else if (textAria.readOnly && event.key !== 'Backspace' && letters[event.code] !== undefined) {
-            event.preventDefault();
-            const text = textAria.value;
-            if (!isCapsLock)textAria.value = text.slice(0, positionCarriage) + (language.state === 'english' ? letters[event.code][0].toLowerCase() : letters[event.code][1].toLowerCase()) + text.slice(positionCarriage);
-            else if (isCapsLock) textAria.value = text.slice(0, positionCarriage) + (language.state === 'english' ? letters[event.code][0].toUpperCase() : letters[event.code][1].toUpperCase()) + text.slice(positionCarriage);
-            positionCarriage += 1;
-          } else if (!textAria.readOnly && event.key !== 'Backspace' && event.key !== 'Delete' && letters[event.code] !== undefined) {
+          } else if (event.key !== 'Backspace' && letters[event.code] !== undefined) {
             event.preventDefault();
             const text = textAria.value;
             if (!isCapsLock)textAria.value = text.slice(0, positionCarriage) + (language.state === 'english' ? letters[event.code][0].toLowerCase() : letters[event.code][1].toLowerCase()) + text.slice(positionCarriage);
@@ -178,25 +186,43 @@ class VirtualKeyboard {
         frameKeyboard.children[54].setAttribute('style', 'background-color: black;');
         frameKeyboard.children[54].setAttribute('style', 'transition: all 0.5s;');
       }
+      if (!isCapsLock) {
+        frameKeyboard.children[29].setAttribute('style', 'background-color: black;');
+        frameKeyboard.children[29].setAttribute('style', 'transition: all 0.5s;');
+      }
     });
     body.addEventListener('mousedown', (event) => {
       const textAria = document.querySelector('.main__text-area');
+      clickMouseKey = false;
       let targetButton;
-      if (event.target.className.includes('frame-keyboard__button')) targetButton = event.target.firstElementChild.innerHTML;
-      else if (event.target.className === 'frame-keyboard__text') targetButton = event.target.innerHTML;
-      if (targetButton === 'Backspace' && textAria.readOnly && positionCarriage !== 0) {
+      if (event.target.className.includes('frame-keyboard__button')) {
+        targetButton = event.target.firstElementChild.innerHTML;
+        clickMouseKey = false;
+        event.preventDefault();
+      } else if (event.target.className === 'frame-keyboard__text') {
+        targetButton = event.target.innerHTML;
+        clickMouseKey = false;
+        event.preventDefault();
+      } else clickMouseKey = true;
+      if (targetButton === 'Backspace') {
         const text = textAria.value;
-        textAria.value = text.slice(0, positionCarriage - 1) + text.slice(positionCarriage);
-        if (positionCarriage > 0) positionCarriage -= 1;
-        else positionCarriage = 0;
+        if (positionCarriage !== 0) {
+          textAria.value = text.slice(0, positionCarriage - 1)
+            + text.slice(positionCarriage);
+        }
+        if (positionCarriage > 0) {
+          positionCarriage -= 1;
+          textAria.selectionEnd = positionCarriage;
+        } else positionCarriage = 0;
       } else if (targetButton === 'Tab') {
         const text = textAria.value;
         textAria.value = `${text.slice(0, positionCarriage)}    ${text.slice(positionCarriage)}`;
         positionCarriage += 4;
         textAria.selectionEnd = positionCarriage;
-      } else if (targetButton === 'Delete' && textAria.readOnly) {
+      } else if (targetButton === 'Delete') {
         const text = textAria.value;
         textAria.value = text.slice(0, positionCarriage) + text.slice(positionCarriage + 1);
+        textAria.selectionEnd = positionCarriage;
       } else if (targetButton === 'CapsLock') {
         isCapsLock = !isCapsLock;
         if (isCapsLock) {
@@ -214,10 +240,11 @@ class VirtualKeyboard {
           }
         }
       } else if (targetButton === 'Enter') {
-        if (textAria.readOnly) {
-          textAria.value += '\n';
-          positionCarriage += 1;
-        }
+        const text = textAria.value;
+        textAria.value = `${text.slice(0, positionCarriage)}\n${
+          text.slice(positionCarriage)}`;
+        positionCarriage += 1;
+        textAria.selectionEnd = positionCarriage;
       } else if (targetButton === 'Win') {
         positionCarriage += 0;
       } else if (targetButton === 'Alt' || targetButton === 'Ctrl') {
@@ -245,7 +272,8 @@ class VirtualKeyboard {
         textAria.selectionEnd = positionCarriage;
       } else if (targetButton === 'down') {
         const text = textAria.value;
-        textAria.value = `${text.slice(0, positionCarriage)}▼${text.slice(positionCarriage)}`;
+        textAria.value = `${text.slice(0, positionCarriage)}▼${
+          text.slice(positionCarriage)}`;
         positionCarriage += 1;
         textAria.selectionEnd = positionCarriage;
       } else if (targetButton === 'Shift') {
@@ -255,22 +283,13 @@ class VirtualKeyboard {
         } else if (!isCapsLock) {
           this.keyNames(4, 5, letters);
         }
-      } else if (textAria.readOnly && event.key !== 'Backspace' && targetButton !== undefined) {
-        event.preventDefault();
+      } else if (event.key !== 'Backspace' && targetButton !== undefined) {
+        if (targetButton === '&amp;') targetButton = '&';
+        else if (targetButton === '&lt;') targetButton = '<';
+        else if (targetButton === '&gt;') targetButton = '>';
         const text = textAria.value;
-        if (!isCapsLock) {
-          textAria.value = text.slice(0, positionCarriage) + targetButton
+        textAria.value = text.slice(0, positionCarriage) + targetButton
             + text.slice(positionCarriage);
-        } else if (isCapsLock) {
-          textAria.value = text.slice(0, positionCarriage)
-            + targetButton + text.slice(positionCarriage);
-        }
-        positionCarriage += 1;
-      } else if (!textAria.readOnly && event.key !== 'Backspace' && event.key !== 'Delete' && letters[event.code] !== undefined) {
-        event.preventDefault();
-        const text = textAria.value;
-        if (!isCapsLock)textAria.value = text.slice(0, positionCarriage) + (language.state === 'english' ? letters[event.code][0].toLowerCase() : letters[event.code][1].toLowerCase()) + text.slice(positionCarriage);
-        else if (isCapsLock) textAria.value = text.slice(0, positionCarriage) + (language.state === 'english' ? letters[event.code][0].toUpperCase() : letters[event.code][1].toUpperCase()) + text.slice(positionCarriage);
         positionCarriage += 1;
         textAria.selectionEnd = positionCarriage;
       }
@@ -332,7 +351,9 @@ class VirtualKeyboard {
       textAria.readOnly = false;
     });
     textAria.addEventListener('blur', () => {
-      textAria.readOnly = true;
+      if (clickMouseKey) {
+        textAria.readOnly = true;
+      }
       positionCarriage = textAria.selectionStart;
     });
     textAria.addEventListener('click', () => {
@@ -397,8 +418,8 @@ class VirtualKeyboard {
       KeyB: ['b', 'и', 'B', 'И', 'B', 'И', 'b', 'и'],
       KeyN: ['n', 'т', 'N', 'Т', 'N', 'Т', 'n', 'т'],
       KeyM: ['m', 'ь', 'M', 'Ь', 'M', 'Ь', 'm', 'ь'],
-      Comma: [',', 'б', ',', 'Б', '<', 'Б', '<', 'б'],
-      Period: ['.', 'ю', '.', 'Ю', '>', 'Ю', '>', 'ю'],
+      Comma: [',', 'б', ',', 'Б', '<', 'Б', '<', 'б', '&lt;'],
+      Period: ['.', 'ю', '.', 'Ю', '>', 'Ю', '>', 'ю', '&gt;'],
       Slash: ['/', '.', '/', '.', '?', ',', '?', ','],
       ArrowUp: ['up', 'up', 'up', 'up', 'up', 'up', 'up', 'up'],
       ShiftRight: ['Shift', 'Shift', 'Shift', 'Shift', 'Shift', 'Shift', 'Shift', 'Shift'],
@@ -436,11 +457,21 @@ class VirtualKeyboard {
     return button;
   }
 
+  static createFooter() {
+    const footer = document.createElement('footer');
+    const p = document.createElement('p');
+    p.classList.add('footer__text');
+    p.innerText = 'Клавиатура создана в операционной системе Windows\n Для переключения языка комбинация на физической клавиатуре: ctrl + alt';
+    footer.append(p);
+    body.append(footer);
+  }
+
   static main(state) {
     this.createHeader();
     this.createMain();
     const letters = this.objectLetters();
     Object.entries(letters).forEach((letter) => this.addButton(this.createButton(letter, state)));
+    this.createFooter();
   }
 }
 

@@ -1,5 +1,5 @@
 .header__main-text {
-    text-align: center
+    text-align: center;
 }
 
 .main {
@@ -30,6 +30,7 @@
     background-color: black;
     border-radius: 5px;
     cursor: pointer;
+    user-select: none;
 }
 
 .frame-keyboard__button_capsLock,
@@ -57,4 +58,8 @@
 
 .frame-keyboard__text {
     color: cornsilk;
+}
+
+.footer__text {
+    text-align: center
 }
