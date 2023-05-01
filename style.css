@@ -1,0 +1,65 @@
+.header__main-text {
+    text-align: center;
+}
+
+.main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.frame-keyboard {
+    display: flex;
+    flex-wrap: wrap;
+    align-content: center;
+    gap: 5px;
+    padding: 10px;
+    width: 760px;
+    height: 270px;
+    background-color: gray;
+
+}
+
+.frame-keyboard__button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 45px;
+    height: 45px;
+    background-color: black;
+    border-radius: 5px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.frame-keyboard__button_capsLock,
+.frame-keyboard__button_backspace,
+.frame-keyboard__button_shift-left{
+    width: 110px;
+}
+
+.frame-keyboard__button_tab {
+    width: 60px;
+}
+
+.frame-keyboard__button_enter,
+.frame-keyboard__button_shift-right{
+    width: 95px;
+}
+
+.frame-keyboard__button_space {
+    width: 360px;
+}
+
+.frame-keyboard__button:hover {
+    background-color: gold;
+}
+
+.frame-keyboard__text {
+    color: cornsilk;
+}
+
+.footer__text {
+    text-align: center
+}
